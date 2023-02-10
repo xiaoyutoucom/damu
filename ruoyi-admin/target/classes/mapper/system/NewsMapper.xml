@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.NewsMapper">
+    
+    <resultMap type="News" id="NewsResult">
+        <result property="id"    column="id"    />
+        <result property="name"    column="name"    />
+        <result property="url"    column="url"    />
+        <result property="overview"    column="overview"    />
+        <result property="detail"    column="detail"    />
+        <result property="created"    column="created"    />
+        <result property="modified"    column="modified"    />
+    </resultMap>
+
+    <sql id="selectNewsVo">
+        select id, name, url, overview, detail, created, modified from news
+    </sql>
+
+    <select id="selectNewsList" parameterType="News" resultMap="NewsResult">
+        <include refid="selectNewsVo"/>
+        <where>  
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+        </where>
+        order by created DESC
+    </select>
+    
+    <select id="selectNewsById" parameterType="Long" resultMap="NewsResult">
+        <include refid="selectNewsVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertNews" parameterType="News" useGeneratedKeys="true" keyProperty="id">
+        insert into news
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="name != null and name != ''">name,</if>
+            <if test="url != null and url != ''">url,</if>
+            <if test="overview != null and overview != ''">overview,</if>
+            <if test="detail != null and detail != ''">detail,</if>
+            <if test="created != null">created,</if>
+            <if test="modified != null">modified,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="name != null and name != ''">#{name},</if>
+            <if test="url != null and url != ''">#{url},</if>
+            <if test="overview != null and overview != ''">#{overview},</if>
+            <if test="detail != null and detail != ''">#{detail},</if>
+            <if test="created != null">#{created},</if>
+            <if test="modified != null">#{modified},</if>
+         </trim>
+    </insert>
+
+    <update id="updateNews" parameterType="News">
+        update news
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null and name != ''">name = #{name},</if>
+            <if test="url != null and url != ''">url = #{url},</if>
+            <if test="overview != null and overview != ''">overview = #{overview},</if>
+            <if test="detail != null and detail != ''">detail = #{detail},</if>
+            <if test="created != null">created = #{created},</if>
+            <if test="modified != null">modified = #{modified},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteNewsById" parameterType="Long">
+        delete from news where id = #{id}
+    </delete>
+
+    <delete id="deleteNewsByIds" parameterType="String">
+        delete from news where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

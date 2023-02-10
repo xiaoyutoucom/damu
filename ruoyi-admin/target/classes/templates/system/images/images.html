@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('图片管理列表')" />
+</head>
+<body class="gray-bg">
+
+     <div class="container-div">
+         <h2 style="text-align: center">淄博车务段会议管理系统</h2>
+        <div class="row">
+            <div class="col-sm-12 search-collapse">
+                <form id="formId">
+                    <div class="select-list">
+                        <ul>
+                            <li>
+                                <label>会议名称</label>
+                             <input type="text" name="name"/>
+
+                            </li>
+                            <li>
+                                <label>科室</label>
+                               <!-- <input type="text"  placeholder="请选择" name="type"/>  -->
+                                <select name="type" th:with="type=${@dict.getType('sys_images')}">
+                                    <option value="">所有</option>
+                                    <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+                                </select>
+                            </li>
+                            <li>
+                                <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                            </li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+
+            <div class="btn-group-sm" id="toolbar" role="group">
+                <a class="btn btn-success" onclick="$.operate.add()" shiro:hasPermission="system:images:add">
+                    <i class="fa fa-plus"></i> 添加
+                </a>
+                <a class="btn btn-primary single disabled" onclick="$.operate.edit()" shiro:hasPermission="system:images:edit">
+                    <i class="fa fa-edit"></i> 修改
+                </a>
+                <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()" shiro:hasPermission="system:images:remove">
+                    <i class="fa fa-remove"></i> 删除
+                </a>
+                <a class="btn btn-warning" onclick="$.table.exportExcel()" shiro:hasPermission="system:images:export">
+                    <i class="fa fa-download"></i> 导出
+                </a>
+            </div>
+            <div class="col-sm-12 select-table table-striped">
+                <table id="bootstrap-table"></table>
+            </div>
+        </div>
+    </div>
+    <th:block th:include="include :: footer" />
+    <script th:inline="javascript">
+        var editFlag = [[${@permission.hasPermi('system:images:edit')}]];
+        var removeFlag = [[${@permission.hasPermi('system:images:remove')}]];
+        var typeDatas = [[${@dict.getType('sys_images')}]];
+        var prefix = ctx + "system/images";
+
+        $(function() {
+            var options = {
+                url: prefix + "/list",
+                createUrl: prefix + "/add",
+                updateUrl: prefix + "/edit/{id}",
+                removeUrl: prefix + "/remove",
+                exportUrl: prefix + "/export",
+                modalName: "轮播图",
+                columns: [{
+                    checkbox: true
+                },
+                {
+                    field: 'id',
+                    title: '序号',
+                    visible: false
+                },
+                {
+                    field: 'type',
+                    title: '科室',
+                    sortable: true
+                },
+                {
+                    field: 'name',
+                    title: '会议名称',
+                    sortable: true
+                },
+                {
+                        field: 'ryname',
+                        title: '参会人员',
+                    sortable: true
+                },
+                {
+                        field: 'zlname',
+                        title: '会议资料',
+                    sortable: true
+                },
+                {
+                    field: 'url',
+                    title: '下载',
+                    formatter: function(value, row, index) {
+                        var actions = [];
+                        actions.push('<a href='+value+' class="btn btn-success btn-xs ' + editFlag + '" href="javascript:void(0)"><i class="fa fa-edit"></i>下载</a> ');
+                        return actions.join('');
+                    }
+                },
+                {
+                    field: 'created',
+                    title: '创建时间',
+                    sortable: true
+                },
+                {
+                    field: 'modified',
+                    title: '修改时间',
+                    sortable: true
+                },
+                {
+                    title: '操作',
+                    align: 'center',
+                    formatter: function(value, row, index) {
+                        var actions = [];
+                        actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="$.operate.edit(\'' + row.id + '\')"><i class="fa fa-edit"></i>编辑</a> ');
+                        actions.push('<a class="btn btn-danger btn-xs ' + removeFlag + '" href="javascript:void(0)" onclick="$.operate.remove(\'' + row.id + '\')"><i class="fa fa-remove"></i>删除</a>');
+                        return actions.join('');
+                    }
+                }]
+            };
+            $.table.init(options);
+        });
+    </script>
+</body>
+</html>

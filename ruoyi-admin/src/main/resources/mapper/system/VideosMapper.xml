@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.VideosMapper">
+    
+    <resultMap type="Videos" id="VideosResult">
+        <result property="id"    column="id"    />
+        <result property="name"    column="name"    />
+        <result property="url"    column="url"    />
+        <result property="created"    column="created"    />
+        <result property="modified"    column="modified"    />
+        <result property="img"    column="img"    />
+    </resultMap>
+
+    <sql id="selectVideosVo">
+        select id, name, url, created, modified, img from videos
+    </sql>
+
+    <select id="selectVideosList" parameterType="Videos" resultMap="VideosResult">
+        <include refid="selectVideosVo"/>
+        <where>  
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+        </where>
+    </select>
+    
+    <select id="selectVideosById" parameterType="Long" resultMap="VideosResult">
+        <include refid="selectVideosVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertVideos" parameterType="Videos" useGeneratedKeys="true" keyProperty="id">
+        insert into videos
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="name != null">name,</if>
+            <if test="url != null">url,</if>
+            <if test="created != null">created,</if>
+            <if test="modified != null">modified,</if>
+            <if test="img != null">img,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="name != null">#{name},</if>
+            <if test="url != null">#{url},</if>
+            <if test="created != null">#{created},</if>
+            <if test="modified != null">#{modified},</if>
+            <if test="img != null">#{img},</if>
+         </trim>
+    </insert>
+
+    <update id="updateVideos" parameterType="Videos">
+        update videos
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null">name = #{name},</if>
+            <if test="url != null">url = #{url},</if>
+            <if test="created != null">created = #{created},</if>
+            <if test="modified != null">modified = #{modified},</if>
+            <if test="img != null">img = #{img},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteVideosById" parameterType="Long">
+        delete from videos where id = #{id}
+    </delete>
+
+    <delete id="deleteVideosByIds" parameterType="String">
+        delete from videos where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

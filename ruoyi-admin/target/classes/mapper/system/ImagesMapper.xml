@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.ImagesMapper">
+    
+    <resultMap type="Images" id="ImagesResult">
+        <result property="id"    column="id"    />
+        <result property="type"    column="type"    />
+        <result property="name"    column="name"    />
+        <result property="url"    column="url"    />
+        <result property="created"    column="created"    />
+        <result property="modified"    column="modified"    />
+        <result property="ryname"    column="ryname"    />
+        <result property="zlname"    column="zlname"    />
+    </resultMap>
+
+    <sql id="selectImagesVo">
+        select id, type, name, url, created, modified, ryname, zlname from images
+    </sql>
+
+    <select id="selectImagesList" parameterType="Images" resultMap="ImagesResult">
+        <include refid="selectImagesVo"/>
+        <where>  
+            <if test="type != null  and type != ''"> and type = #{type}</if>
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+            <if test="url != null  and url != ''"> and url = #{url}</if>
+            <if test="created != null "> and created = #{created}</if>
+            <if test="modified != null "> and modified = #{modified}</if>
+            <if test="ryname != null  and ryname != ''"> and ryname = #{ryname}</if>
+            <if test="zlname != null  and zlname != ''"> and zlname = #{zlname}</if>
+        </where>
+    </select>
+    
+    <select id="selectImagesById" parameterType="Long" resultMap="ImagesResult">
+        <include refid="selectImagesVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertImages" parameterType="Images" useGeneratedKeys="true" keyProperty="id">
+        insert into images
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="type != null">type,</if>
+            <if test="name != null">name,</if>
+            <if test="url != null">url,</if>
+            <if test="created != null">created,</if>
+            <if test="modified != null">modified,</if>
+            <if test="ryname != null">ryname,</if>
+            <if test="zlname != null">zlname,</if>
+
+
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="type != null">#{type},</if>
+            <if test="name != null">#{name},</if>
+            <if test="url != null">#{url},</if>
+            <if test="created != null">#{created},</if>
+            <if test="modified != null">#{modified},</if>
+            <if test="ryname != null">#{ryname},</if>
+            <if test="zlname != null">#{zlname},</if>
+
+         </trim>
+    </insert>
+
+    <update id="updateImages" parameterType="Images">
+        update images
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="type != null">type = #{type},</if>
+            <if test="name != null">name = #{name},</if>
+            <if test="url != null">url = #{url},</if>
+            <if test="created != null">created = #{created},</if>
+            <if test="modified != null">modified = #{modified},</if>
+            <if test="zlname != null">zlname = #{zlname},</if>
+            <if test="ryname != null">ryname = #{ryname},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteImagesById" parameterType="Long">
+        delete from images where id = #{id}
+    </delete>
+
+    <delete id="deleteImagesByIds" parameterType="String">
+        delete from images where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

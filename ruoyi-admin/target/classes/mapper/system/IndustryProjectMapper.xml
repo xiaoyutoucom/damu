@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.IndustryProjectMapper">
+    
+    <resultMap type="IndustryProject" id="IndustryProjectResult">
+        <result property="id"    column="id"    />
+        <result property="type"    column="type"    />
+        <result property="projectName"    column="project_name"    />
+        <result property="directorName"    column="director_name"    />
+        <result property="writersName"    column="writers_name"    />
+        <result property="starring"    column="starring"    />
+        <result property="releaseTime"    column="release_time"    />
+        <result property="synopsis"    column="synopsis"    />
+        <result property="imageSort"    column="image_sort"    />
+        <result property="created"    column="created"    />
+        <result property="modified"    column="modified"    />
+        <result property="platform"    column="platform"    />
+        <result property="programType"    column="program_type"    />
+        <result property="imageUrl"    column="image_url"    />
+    </resultMap>
+
+    <sql id="selectIndustryProjectVo">
+        select id, type, project_name, director_name, writers_name, starring, release_time, synopsis, image_sort, created, modified, platform, program_type, image_url from Industry_project
+    </sql>
+
+    <select id="selectIndustryProjectList" parameterType="IndustryProject" resultMap="IndustryProjectResult">
+        <include refid="selectIndustryProjectVo"/>
+        <where>  
+            <if test="type != null  and type != ''"> and type = #{type}</if>
+            <if test="projectName != null  and projectName != ''"> and project_name like concat('%', #{projectName}, '%')</if>
+        </where>
+        order by image_sort
+    </select>
+    
+    <select id="selectIndustryProjectById" parameterType="Long" resultMap="IndustryProjectResult">
+        <include refid="selectIndustryProjectVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertIndustryProject" parameterType="IndustryProject" useGeneratedKeys="true" keyProperty="id">
+        insert into Industry_project
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="type != null and type != ''">type,</if>
+            <if test="projectName != null">project_name,</if>
+            <if test="directorName != null">director_name,</if>
+            <if test="writersName != null">writers_name,</if>
+            <if test="starring != null">starring,</if>
+            <if test="releaseTime != null">release_time,</if>
+            <if test="synopsis != null">synopsis,</if>
+            <if test="imageSort != null">image_sort,</if>
+            <if test="created != null">created,</if>
+            <if test="modified != null">modified,</if>
+            <if test="platform != null">platform,</if>
+            <if test="programType != null">program_type,</if>
+            <if test="imageUrl != null">image_url,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="type != null and type != ''">#{type},</if>
+            <if test="projectName != null">#{projectName},</if>
+            <if test="directorName != null">#{directorName},</if>
+            <if test="writersName != null">#{writersName},</if>
+            <if test="starring != null">#{starring},</if>
+            <if test="releaseTime != null">#{releaseTime},</if>
+            <if test="synopsis != null">#{synopsis},</if>
+            <if test="imageSort != null">#{imageSort},</if>
+            <if test="created != null">#{created},</if>
+            <if test="modified != null">#{modified},</if>
+            <if test="platform != null">#{platform},</if>
+            <if test="programType != null">#{programType},</if>
+            <if test="imageUrl != null">#{imageUrl},</if>
+         </trim>
+    </insert>
+
+    <update id="updateIndustryProject" parameterType="IndustryProject">
+        update Industry_project
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="type != null and type != ''">type = #{type},</if>
+            <if test="projectName != null">project_name = #{projectName},</if>
+            <if test="directorName != null">director_name = #{directorName},</if>
+            <if test="writersName != null">writers_name = #{writersName},</if>
+            <if test="starring != null">starring = #{starring},</if>
+            <if test="releaseTime != null">release_time = #{releaseTime},</if>
+            <if test="synopsis != null">synopsis = #{synopsis},</if>
+            <if test="imageSort != null">image_sort = #{imageSort},</if>
+            <if test="created != null">created = #{created},</if>
+            <if test="modified != null">modified = #{modified},</if>
+            <if test="platform != null">platform = #{platform},</if>
+            <if test="programType != null">program_type = #{programType},</if>
+            <if test="imageUrl != null">image_url = #{imageUrl},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteIndustryProjectById" parameterType="Long">
+        delete from Industry_project where id = #{id}
+    </delete>
+
+    <delete id="deleteIndustryProjectByIds" parameterType="String">
+        delete from Industry_project where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>
